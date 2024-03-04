@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import './Shop.css';
 import Product from '../Product/Product';
 import Cart from '../Cart/Cart';
-import { addToData, getShoppingCart } from '../../utilities/storage';
+import { addToData, allDeleteData, getShoppingCart } from '../../utilities/storage';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 const Shop = () => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
@@ -30,17 +33,21 @@ const Shop = () => {
         // const newCart = [...cart, product];
         let newCart = [];
         const exits = cart.find(pd => pd.id === product.id);
-        if(!exits){
+        if (!exits) {
             product.quantity = 1;
             newCart = [...cart, product];
         }
-        else{
+        else {
             exits.quantity = exits.quantity + 1;
             const remaining = cart.filter(pd => pd.id !== product.id);
             newCart = [...remaining, exits];
         }
         setCart(newCart);
         addToData(product.id);
+    }
+    const handleClearData = () => {
+        setCart([]);
+        allDeleteData();
     }
     return (
         <div className='shop-container'>
@@ -55,8 +62,13 @@ const Shop = () => {
             </div>
             <div className='cart-container'>
                 <Cart
+                    handleClearData={handleClearData}
                     cart={cart}
-                ></Cart>
+                >
+                    <Link to="/orders">
+                        <button className='proceed'>Review Orders<FontAwesomeIcon  icon={faTrashAlt}/></button>
+                    </Link>
+                </Cart>
             </div>
         </div>
     );
